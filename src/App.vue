@@ -28,27 +28,50 @@
 
 <style scoped>
 header {
-  height: 3rem;
+  height: 60px;
   display: flex;
-  background-color: black;
+  align-items: center;
+  background-color: #111;
   color: #fff;
-  font-size: 1.2rem;
-  padding-left: 2rem;
+  padding-left: 3vw;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid var(--border-color, #333);
 }
 
 nav {
-  column-gap: 2rem;
-  margin-bottom: 0;
+  column-gap: 2.5rem;
   display: flex;
   align-items: center;
 }
 
 nav a {
   text-decoration: none;
+  color: var(--text-muted, #aaa);
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+  position: relative;
+  padding-bottom: 4px;
+}
+nav a:hover {
+  color: var(--text-color, #fff);
+}
+
+nav a.router-link-exact-active {
   color: #fff;
+  font-weight: 600;
+}
+nav a.router-link-exact-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--primary-gradient, linear-gradient(to right, #8e2de2, #4a00e0));
 }
 
 main {
-  padding: 2vw 0 0 3vw;
+  padding: 2rem 4vw;
 }
 </style>

@@ -3,15 +3,14 @@
   import api from '@/plugins/axios';
   import Loading from 'vue-loading-overlay';
   import { useGenreStore } from '@/stores/genre';
-  import { useRouter } from 'vue-router'
-  
-  const router = useRouter()
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
   const genreStore = useGenreStore();
   const genres = ref([]);
   const tv = ref([]);
   const isLoading = ref(false);
 
-  
   const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR');
 
   function getGenreName(id) {
@@ -20,165 +19,193 @@
   }
 
   function openTv(tvId) {
-  router.push({ name: 'TvDetails', params: { tvId } });
-}
+    router.push({ name: 'TvDetails', params: { tvId } });
+  }
 
   onMounted(async () => {
     const response = await api.get('genre/tv/list?language=pt-BR');
     genres.value = response.data.genres;
-  })
+  });
 
   onMounted(async () => {
-  isLoading.value = true;
-  await genreStore.getAllGenres('tv');
-  isLoading.value = false;
-});
-
-const listTv = async (genreId) => {
-  genreStore.setCurrentGenreId(genreId);
-  isLoading.value = true;
-  const response = await api.get('discover/tv', {
-    params: {
-      with_genres: genreId,
-      language: 'pt-BR',
-    },
+    isLoading.value = true;
+    await genreStore.getAllGenres('tv');
+    isLoading.value = false;
   });
-  tv.value = response.data.results;
-  isLoading.value = false;
-};
+
+  const listTv = async (genreId) => {
+    genreStore.setCurrentGenreId(genreId);
+    isLoading.value = true;
+    const response = await api.get('discover/tv', {
+      params: {
+        with_genres: genreId,
+        language: 'pt-BR',
+      },
+    });
+    tv.value = response.data.results;
+    isLoading.value = false;
+  };
 </script>
 
 <template>
-    <h1>Programas de TV</h1>
-    <ul class="genre-list">
-      <li
-        v-for="genre in genreStore.genres":key="genre.id" @click="listTv(genre.id)" class="genre-item" :class="{ active: genre.id === genreStore.currentGenreId }">
-       {{ genre.name }}
-     </li>
-    </ul>
-    <loading v-model:active="isLoading" is-full-page />
-    <div class="tv-list">
-  <div v-for="tv in tv" :key="tv.id" class="tv-card">
-    <img
-      :src="`https://image.tmdb.org/t/p/w500${tv.poster_path}`"
-      :alt="tv.title"
-      @click="openTv(tv.id)"
-    />
-    <div class="tv-details">
-      <p class="tv-title">{{ tv.name }}</p>
-      <p class="tv-release-date">{{formatDate(tv.first_air_date)}}</p>
-      <p class="tv-genres">
-        <span
-           v-for="genre_id in tv.genre_ids" :key="genre_id" @click="listTv(genre_id)" :class="{ active: genre_id === genreStore.currentGenreId }">
-           {{ genreStore.getGenreName(genre_id) }}
-        </span>
-      </p>
+  <h1>Programas de TV</h1>
+  <ul class="genre-list">
+    <li
+      v-for="genre in genreStore.genres"
+      :key="genre.id"
+      @click="listTv(genre.id)"
+      class="genre-item"
+      :class="{ active: genre.id === genreStore.currentGenreId }"
+    >
+      {{ genre.name }}
+    </li>
+  </ul>
+  <loading v-model:active="isLoading" is-full-page />
+  <div class="tv-list">
+    <div v-for="t in tv" :key="t.id" class="tv-card">
+      <img
+        :src="`https://image.tmdb.org/t/p/w500${t.poster_path}`"
+        :alt="t.name"
+        @click="openTv(t.id)"
+      />
+      <div class="tv-details">
+        <p class="tv-title">{{ t.name }}</p>
+        <p class="tv-release-date">{{ formatDate(t.first_air_date) }}</p>
+        <p class="tv-genres">
+          <span
+            v-for="genre_id in t.genre_ids"
+            :key="genre_id"
+            @click="listTv(genre_id)"
+            :class="{ active: genre_id === genreStore.currentGenreId }"
+          >
+            {{ genreStore.getGenreName(genre_id) }}
+          </span>
+        </p>
+      </div>
     </div>
   </div>
-</div>
-  </template>
-  
-  <style scoped>
-  .genre-list {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 2rem;
-    list-style: none;
-    padding: 2vw 2vw 0 0;
-    margin-bottom: 2rem;
-  }
-  
-  .genre-item {
-    background-color: slateblue;
-    border-radius: 30px;
-    padding: 0.7rem 1rem;
-    color: #fff;
-  }
-  
-  .genre-item:hover {
-    cursor: pointer;
-    background-color: #a352ff;
-    box-shadow: 0 0 0.5rem #703ecc;
-  }
-  
-  .tv-list {
-  display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 16px;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-    padding: 4vw;
-    padding-bottom: 16vw;
-    
-  }
-  
-  .tv-card {
-    width: 14rem;
-    height: 35rem;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 0 0.5rem #000;
-    justify-content: center;
-    margin-bottom: 3rem;
-  }
-  
-  .tv-card img {
-    width: 100%;
-    height: 20rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 0.5rem #000000;
-  }
-  
-  .tv-details {
-    padding: 0 1rem;
-    background-color: #0000;
-    border-radius: 20px;
-  }
-  
-  .tv-title {
-    font-size: 1.1rem;
-    font-weight: bold;
-    line-height: 1.3rem;
-    height: 3.2rem;
-    margin: 0 0 1rem 0;
-  }
+</template>
 
-  .tv-genres {
+<style scoped>
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+.genre-list {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: flex-start;
   justify-content: center;
-  gap: 0.2rem;
-  margin-top: 1.3rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 3rem;
+}
+
+.genre-item {
+  background-color: var(--card-background, #1c1c1c);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 30px;
+  padding: 0.6rem 1.2rem;
+  color: var(--text-muted, #aaa);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.genre-item:hover {
+  cursor: pointer;
+  background-color: var(--secondary-color, #4a00e0);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.genre-item.active {
+  background: var(--primary-gradient, linear-gradient(to right, #8e2de2, #4a00e0));
+  color: #fff;
+  font-weight: 600;
+  border-color: var(--primary-color);
+}
+
+.tv-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2rem;
+  padding: 0;
+  padding-bottom: 5rem;
+}
+
+.tv-card {
+  background-color: var(--card-background, #1c1c1c);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tv-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+.tv-card img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color, #333);
+}
+
+.tv-details {
+  padding: 1rem;
+}
+
+.tv-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-color, #f0f0f0);
+  margin: 0 0 0.5rem 0;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 3.1rem;
+}
+
+.tv-release-date {
+  font-size: 0.9rem;
+  color: var(--text-muted, #aaa);
+  margin-bottom: 1rem;
+}
+
+.tv-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .tv-genres span {
-  background-color: slateblue;
-  border-radius: 0.5rem;
-  padding: 0.2rem 0.5rem;
-  color: #fff;
-  font-size: 0.8rem;
-  font-weight: bold;
+  background-color: #333;
+  border-radius: 20px;
+  padding: 0.3rem 0.6rem;
+  color: #ccc;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
 }
 
 .tv-genres span:hover {
   cursor: pointer;
-  background-color: #a352ff;
-  box-shadow: 0 0 0.5rem rgb(120, 107, 206);
-}
-
-.active {
-  background-color: #ffffff;
-  font-weight: bolder;
-  color: #000;
+  background-color: var(--secondary-color, #4a00e0);
+  color: #fff;
 }
 
 .tv-genres span.active {
-  background-color: #ffffff;
-  color: #000;
-  font-weight: bolder;
+  background: var(--primary-gradient, linear-gradient(to right, #8e2de2, #4a00e0));
+  color: #fff;
+  font-weight: 600;
 }
-  </style>
+</style>
