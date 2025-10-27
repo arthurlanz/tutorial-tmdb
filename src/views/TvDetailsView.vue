@@ -82,7 +82,7 @@
 </template>
 
 <style scoped>
-/* Os estilos são idênticos ao MovieDetailsView.vue */
+
 .details-backdrop {
   position: relative;
   background-size: cover;
