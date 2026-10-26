@@ -1,38 +1,29 @@
-# tutorial tmdb
+# Tutorial TMDB
 
-This template should help get you started developing with Vue 3 in Vite.
+Aplicação de estudo em **Vue 3** que consome a API do [TMDB](https://www.themoviedb.org/) para listar filmes e séries por gênero e mostrar os detalhes de cada título.
 
-## Recommended IDE Setup
+## Telas
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Home**
+- **Filmes**: lista de filmes por gênero
+- **Séries**: lista de séries por gênero
+- **Detalhes** do filme ou da série
 
-## Recommended Browser Setup
+## Tecnologias
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- Vue 3 + Vite
+- Vue Router
+- Pinia
+- Axios
+- vue-loading-overlay
 
-## Customize configuration
+## Como rodar
 
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
+git clone https://github.com/arthurlanz/tutorial-tmdb.git
+cd tutorial-tmdb
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+É preciso ter uma chave de API do TMDB configurada no projeto (veja `src/plugins/`).
